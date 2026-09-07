@@ -45,7 +45,7 @@ Now the parity condition is $C_j(r) \equiv C_j(l-1) + (j - l) \pmod 2$. It still
 factorises, but the left-side query must combine the parity of the prefix count with
 the parity of the *position* $l - 1$. The segment tree must therefore keep a
 $2\times 2$ table (count parity $\times$ position parity) per node instead of a
-single counter — a small but genuine adaptation, and the place where a hasty
+single counter. This is a small but genuine adaptation, and the place where a hasty
 solution goes wrong. I also verified there is no closed form: the number of steady
 elements is $\frac{1}{2}\bigl(k + \sum_j (-1)^{j + \sigma(j)}\bigr)$ where $\sigma$
 is the sorting permutation, and $\sum_j (-1)^{j+\sigma(j)}$ has no shortcut in terms
@@ -57,7 +57,7 @@ of simple statistics of the subarray.
   (values up to $10^9$ times $\sim 4.5\cdot 10^{15}$ triples) and adds nothing
   algorithmically. Counting keeps the output exact in 64 bits and the statement cleaner.
 * **Displacement divisible by 3** (or a given $k$). For $k = 3$ the node table becomes
-  $3\times 3$ with a rotation lazy tag — doable, but the statement loses its natural
+  $3\times 3$ with a rotation lazy tag. That is doable, but the statement loses its natural
   "same colour slot" story. For general $k$ the technique breaks down entirely.
 * **Per-length output** ("for every block length $k$ print the total"). The pairs
   $(l, r)$ would be coupled by $r - l + 1 = k$, destroying the factorisation; this

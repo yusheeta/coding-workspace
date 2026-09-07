@@ -1,4 +1,4 @@
-# Steady Books — Editorial
+# Steady Books: Editorial
 
 ## Reformulating "steady"
 

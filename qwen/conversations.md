@@ -40,6 +40,6 @@ For attempts 2 and 3 the follow-up message after a failing verdict was, respecti
 
 ## Conversation links
 
-1. Attempt 1 — `solution_01.cpp`: _link to be added_
-2. Attempt 2 — `solution_02.cpp`: _link to be added_
-3. Attempt 3 — `solution_03.cpp`: _link to be added_
+1. Attempt 1 (`solution_01.cpp`): _link to be added_
+2. Attempt 2 (`solution_02.cpp`): _link to be added_
+3. Attempt 3 (`solution_03.cpp`): _link to be added_

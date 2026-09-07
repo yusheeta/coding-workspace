@@ -24,15 +24,15 @@ steady books in it. Find the sum of these counts over all blocks.
 
 ## Input
 
-The first line contains one integer $n$ ($1 \le n \le 3 \cdot 10^5$) — the number
+The first line contains one integer $n$ ($1 \le n \le 3 \cdot 10^5$), the number
 of books.
 
 The second line contains $n$ integers $a_1, a_2, \dots, a_n$
-($1 \le a_i \le 10^9$) — the heights of the books.
+($1 \le a_i \le 10^9$), the heights of the books.
 
 ## Output
 
-Print one integer — the total number of steady books, summed over all blocks
+Print one integer: the total number of steady books, summed over all blocks
 $[l, r]$.
 
 ## Examples
@@ -89,5 +89,5 @@ $[1,1],[1,2],\dots,[1,5],[2,2],\dots,[5,5]$), which sum to $23$.
 
 In the second example all heights are equal, so stable sorting never moves a
 book and every block of length $k$ contributes $k$. Note that if the equal books
-were allowed to swap places the answer would be different — the relative order
+were allowed to swap places the answer would be different, because the relative order
 of equal heights is preserved.

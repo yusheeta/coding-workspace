@@ -1,4 +1,4 @@
-# Steady Books — problemsetter package
+# Steady Books: problemsetter package
 
 | File | Purpose |
 |------|---------|
@@ -27,7 +27,7 @@
 | 9 | $n = 3\cdot10^5$, two alternating heights | 2250022500050000 |
 | 10 | $n = 3\cdot10^5$, random walk (locally almost sorted) | 2250044540303306 |
 
-Tests 1–5 were cross-checked with `solution_bf.cpp`; in addition the reference
+Tests 1 to 5 were cross-checked with `solution_bf.cpp`; in addition the reference
 solution was stress-tested against the brute force on 600 random arrays with
 $n \le 40$ across all generator modes.
 
