@@ -7,6 +7,7 @@
 //   mode 4: alternating two values
 //   mode 5: sorted blocks of random lengths, shuffled within blocks (locally messy)
 //   mode 6: random walk (adjacent values close)
+//   mode 7: long runs of equal heights, run lengths random in [1, 1000], run values random
 #include <bits/stdc++.h>
 using namespace std;
 int main(int argc, char** argv) {
@@ -30,7 +31,15 @@ int main(int argc, char** argv) {
             cur += len + 1; i += len;
         }
     }
-    else { long long cur = maxV / 2; for (auto &x : a) { cur += rnd(-3, 3); cur = max(1LL, min(maxV, cur)); x = cur; } }
+    else if (mode == 6) { long long cur = maxV / 2; for (auto &x : a) { cur += rnd(-3, 3); cur = max(1LL, min(maxV, cur)); x = cur; } }
+    else {
+        long long i = 0;
+        while (i < n) {
+            long long len = min(n - i, rnd(1, 1000)), v = rnd(1, maxV);
+            for (long long k = 0; k < len; k++) a[i + k] = v;
+            i += len;
+        }
+    }
     printf("%lld\n", n);
     for (long long i = 0; i < n; i++) printf("%lld%c", a[i], i + 1 == n ? '\n' : ' ');
 }
