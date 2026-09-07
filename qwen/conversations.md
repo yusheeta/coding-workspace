@@ -14,9 +14,9 @@ and *verified to fail* against the tests in `test_cases/`:
 
 | Attempt | Approach | Failure | Failing tests |
 |---------|----------|---------|---------------|
-| `solution_01.cpp` | Simulate every block: copy, `stable_sort`, count even displacements. $O(n^3 \log n)$. | TLE (does not finish $n = 3000$ within 10 s) | 6, 7, 8, 9, 10 |
-| `solution_02.cpp` | Fix $l$, extend $r$; segment tree over values with a "flip parity of all larger values" update. Correct, $O(n^2 \log n)$. | TLE (about 1.8 s at $n = 3000$, killed at 10 s for $n = 3\cdot10^5$) | 6, 7, 8, 9, 10 |
-| `solution_03.cpp` | Contribution technique with parity segment tree, $O(n \log n)$, but equal values are handled as a group ("strictly smaller"), ignoring stable-sort order. | Wrong answer whenever heights repeat (prints 21 instead of 23 on the sample, 50 instead of 84 on test 3, 11185 instead of 11414 on test 5) | 1, 3, 5, 7, 9 |
+| `solution_01.cpp` | Simulate every block: copy, `stable_sort`, count even displacements. $O(n^3 \log n)$. | TLE (does not finish $n = 3000$ within 10 s) | 6 to 10, 12 |
+| `solution_02.cpp` | Fix $l$, extend $r$; segment tree over values with a "flip parity of all larger values" update. Correct, $O(n^2 \log n)$. | TLE (about 1.8 s at $n = 3000$, killed at 10 s for $n = 3\cdot10^5$) | 6 to 10, 12 |
+| `solution_03.cpp` | Contribution technique with parity segment tree, $O(n \log n)$, but equal values are handled as a group ("strictly smaller"), ignoring stable-sort order. | Wrong answer whenever heights repeat (prints 21 instead of 23 on the sample, 50 instead of 84 on test 3, 41 instead of 38 on test 11) | 1, 3, 5, 7, 9, 11, 12 |
 
 Replace the placeholders once the real runs are made; if a real run produces a
 different program, replace the corresponding `solution_0k.cpp` with the model's code

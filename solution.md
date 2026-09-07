@@ -78,7 +78,7 @@ The answer is at most $\sum_j j\,(n - j + 1) = \frac{n(n+1)(n+2)}{6} \approx 4.5
 * **Ties.** Treating equal heights as mutually "not smaller" (querying a whole group
   of equal values before inserting any of them) breaks stability: an equal book to
   the left of $j$ *must* be counted as smaller. This gives wrong answers on every
-  test with repeated values (tests 1, 3, 5, 7, 9).
+  test with repeated values (tests 1, 3, 5, 7, 9, 11, 12).
 * **The position term.** It is tempting to test whether the *rank* $S$ is even;
   the correct condition compares $S$ with $j - l$. The $x$-parity counters in the
   tree exist exactly to handle this term.
