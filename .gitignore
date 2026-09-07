@@ -1,0 +1,9 @@
+# compiled binaries
+sol
+bf
+gen
+q1
+q2
+q3
+*.o
+*.exe
