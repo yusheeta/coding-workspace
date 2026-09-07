@@ -1,3 +1,7 @@
+// Qwen attempt 1 (real output of Qwen3.7-Plus on chat.qwen.ai, thinking off, code interpreter active).
+// Outcome: FAILED. Correct on tests 1-5 and 11, time limit exceeded on tests 6-10 and 12 (O(n^2)).
+// Kept verbatim below.
+
 #include <bits/stdc++.h>
 using namespace std;
 

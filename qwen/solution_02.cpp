@@ -1,72 +1,168 @@
-// Qwen attempt 2: incremental right endpoint.
-// Fix l, extend r one step at a time.  When a[r] is appended, its own rank is
-// 1 + (#smaller elements already present), and every element with value
-// greater than a[r] shifts one slot to the right, so its displacement parity
-// flips.  A segment tree over compressed values keeps, for every present
-// element, the parity of its displacement and supports "flip a value range".
-// Correct, but O(n^2 log n) -> TLE for n = 3*10^5.
+// Qwen attempt 2 (real output of Qwen3.7-Plus on chat.qwen.ai, thinking off, code interpreter active).
+// Outcome: PASSED all 12 tests (1.4 s on the slowest). Two +/-1 sign segment trees, values grouped;
+// left tree counts strictly greater, right tree strictly smaller, so ties are handled correctly.
+// Kept verbatim below as the record of that run.
+
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Node { int cnt[2]; bool lazy; };
-int m;
-vector<Node> tr;
-
-void apply(int v) { swap(tr[v].cnt[0], tr[v].cnt[1]); tr[v].lazy ^= 1; }
-void push(int v) { if (tr[v].lazy) { apply(2*v); apply(2*v+1); tr[v].lazy = false; } }
-void pull(int v) { for (int p = 0; p < 2; p++) tr[v].cnt[p] = tr[2*v].cnt[p] + tr[2*v+1].cnt[p]; }
-
-void reset(int v, int lo, int hi) {
-    tr[v].cnt[0] = tr[v].cnt[1] = 0; tr[v].lazy = false;
-    if (lo == hi) return;
-    int mid = (lo + hi) / 2; reset(2*v, lo, mid); reset(2*v+1, mid+1, hi);
-}
-void insert(int v, int lo, int hi, int pos, int par) {
-    if (lo == hi) { tr[v].cnt[par]++; return; }
-    push(v);
-    int mid = (lo + hi) / 2;
-    if (pos <= mid) insert(2*v, lo, mid, pos, par); else insert(2*v+1, mid+1, hi, pos, par);
-    pull(v);
-}
-void flip(int v, int lo, int hi, int l, int r) {
-    if (r < lo || hi < l) return;
-    if (l <= lo && hi <= r) { apply(v); return; }
-    push(v);
-    int mid = (lo + hi) / 2;
-    flip(2*v, lo, mid, l, r); flip(2*v+1, mid+1, hi, l, r);
-    pull(v);
-}
-int countLess(int v, int lo, int hi, int l, int r) {   // number of present elements with value index in [l, r]
-    if (r < lo || hi < l) return 0;
-    if (l <= lo && hi <= r) return tr[v].cnt[0] + tr[v].cnt[1];
-    push(v);
-    int mid = (lo + hi) / 2;
-    return countLess(2*v, lo, mid, l, r) + countLess(2*v+1, mid+1, hi, l, r);
-}
-
-int main() {
+struct SegTree {
     int n;
-    scanf("%d", &n);
-    vector<long long> a(n);
-    for (auto &x : a) scanf("%lld", &x);
-    // compress (value, index) pairs so that equal values are ordered by index (stable sort)
-    vector<int> ord(n); iota(ord.begin(), ord.end(), 0);
-    sort(ord.begin(), ord.end(), [&](int x, int y){ return a[x] != a[y] ? a[x] < a[y] : x < y; });
-    vector<int> key(n);
-    for (int i = 0; i < n; i++) key[ord[i]] = i;
-    m = n;
-    tr.assign(4 * m + 4, Node{{0,0}, false});
-    long long answer = 0;
-    for (int l = 0; l < n; l++) {
-        reset(1, 0, m - 1);
-        for (int r = l; r < n; r++) {
-            int smaller = countLess(1, 0, m - 1, 0, key[r] - 1);
-            int disp = smaller - (r - l);                 // new offset - old offset
-            if (key[r] + 1 <= m - 1) flip(1, 0, m - 1, key[r] + 1, m - 1);
-            insert(1, 0, m - 1, key[r], ((disp % 2) + 2) % 2);
-            answer += tr[1].cnt[0];
+    vector<long long> tree;
+    vector<char> lazy;
+    
+    SegTree(int size) : n(size), tree(4 * size, 0), lazy(4 * size, 0) {
+        build(1, 0, n - 1);
+    }
+    
+    void build(int node, int l, int r) {
+        if (l == r) {
+            tree[node] = 1;
+            return;
+        }
+        int mid = (l + r) / 2;
+        build(2 * node, l, mid);
+        build(2 * node + 1, mid + 1, r);
+        tree[node] = tree[2 * node] + tree[2 * node + 1];
+    }
+    
+    void push(int node, int l, int r) {
+        if (lazy[node]) {
+            tree[2 * node] *= -1;
+            lazy[2 * node] ^= 1;
+            tree[2 * node + 1] *= -1;
+            lazy[2 * node + 1] ^= 1;
+            lazy[node] = 0;
         }
     }
-    printf("%lld\n", answer);
+    
+    void update_range(int node, int l, int r, int ql, int qr) {
+        if (ql > r || qr < l) return;
+        if (ql <= l && r <= qr) {
+            tree[node] *= -1;
+            lazy[node] ^= 1;
+            return;
+        }
+        push(node, l, r);
+        int mid = (l + r) / 2;
+        update_range(2 * node, l, mid, ql, qr);
+        update_range(2 * node + 1, mid + 1, r, ql, qr);
+        tree[node] = tree[2 * node] + tree[2 * node + 1];
+    }
+    
+    long long query_range(int node, int l, int r, int ql, int qr) {
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) return tree[node];
+        push(node, l, r);
+        int mid = (l + r) / 2;
+        return query_range(2 * node, l, mid, ql, qr) + query_range(2 * node + 1, mid + 1, r, ql, qr);
+    }
+    
+    void flip(int l, int r) {
+        if (l > r) return;
+        update_range(1, 0, n - 1, l, r);
+    }
+    
+    long long query(int l, int r) {
+        if (l > r) return 0;
+        return query_range(1, 0, n - 1, l, r);
+    }
+    
+    long long point_query(int idx) {
+        return query(idx, idx);
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    int n;
+    cin >> n;
+    vector<int> a(n + 1); // 1-indexed
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+    }
+    
+    // Group positions by value
+    map<int, vector<int>> groups;
+    for (int i = 1; i <= n; ++i) {
+        groups[a[i]].push_back(i);
+    }
+    
+    // Compute S_E
+    vector<long long> S_E(n + 1, 0);
+    {
+        SegTree seg(n + 1); // indices 0 to n
+        
+        // Process in decreasing order of value
+        vector<int> sorted_values;
+        for (auto& [val, positions] : groups) {
+            sorted_values.push_back(val);
+        }
+        sort(sorted_values.rbegin(), sorted_values.rend());
+        
+        for (int val : sorted_values) {
+            auto& positions = groups[val];
+            
+            // Query first
+            for (int i : positions) {
+                long long T_E = seg.query(0, i - 1);
+                long long v_im1 = (i - 1 >= 0) ? seg.point_query(i - 1) : 1;
+                long long sign = (i % 2 == 0) ? 1 : -1;
+                S_E[i] = sign * v_im1 * T_E;
+            }
+            
+            // Then flip
+            for (int i : positions) {
+                seg.flip(i, n);
+            }
+        }
+    }
+    
+    // Compute S_F
+    vector<long long> S_F(n + 1, 0);
+    {
+        SegTree seg(n + 1); // indices 0 to n
+        
+        // Process in increasing order of value
+        vector<int> sorted_values;
+        for (auto& [val, positions] : groups) {
+            sorted_values.push_back(val);
+        }
+        sort(sorted_values.begin(), sorted_values.end());
+        
+        for (int val : sorted_values) {
+            auto& positions = groups[val];
+            
+            // Query first
+            for (int i : positions) {
+                long long sum_v = seg.query(i, n);
+                long long v_i = seg.point_query(i);
+                long long sign = (i % 2 == 0) ? 1 : -1;
+                S_F[i] = sign * v_i * sum_v;
+            }
+            
+            // Then flip
+            for (int i : positions) {
+                seg.flip(i, n);
+            }
+        }
+    }
+    
+    // Compute answer
+    long long term1 = 0;
+    for (int i = 1; i <= n; ++i) {
+        term1 += (long long)i * (n - i + 1);
+    }
+    
+    long long term2 = 0;
+    for (int i = 1; i <= n; ++i) {
+        term2 += S_E[i] * S_F[i];
+    }
+    
+    long long answer = (term1 + term2) / 2;
+    cout << answer << "\n";
+    
     return 0;
 }

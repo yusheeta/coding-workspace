@@ -11,7 +11,7 @@
 | `idea.md` | How the idea was conceived, rejected variants, final rationale |
 | `requirements.json` | Time limit 2 s, memory limit 256 MB |
 | `test_cases/` | 12 tests, `k.in` / `k.out` |
-| `qwen/` | Three failing attempts in the style of Qwen3-235B-A22B-2507 and the conversation log |
+| `qwen/` | Qwen runs: two real Qwen3.7-Plus programs with share links, one author-written reconstruction, and an honest log (see `qwen/conversations.md`) |
 
 ## Test cases
 

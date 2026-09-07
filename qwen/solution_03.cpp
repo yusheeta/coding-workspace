@@ -1,6 +1,6 @@
-// Qwen attempt 3: contribution technique, O(n log n).
-// Process values in increasing order.  For element j, the number of smaller
-// elements in [l, r] is C(r) - C(l-1) where C(x) = #{i <= x : a_i < a_j}.
+// NOT a Qwen output. Author-written reconstruction of the third typical failure mode (wrong stable-sort
+// tie-break), kept so the folder layout matches the assignment. Fails tests 1, 3, 5, 7, 9, 11, 12.
+// Contribution technique with parity segment tree, O(n log n), but equal values are handled as a group
 // Displacement of j is (C(r) - C(l-1)) - (j - l); count the (l, r) pairs for
 // which this is even with a parity segment tree (suffix flip when an element
 // becomes "smaller").
